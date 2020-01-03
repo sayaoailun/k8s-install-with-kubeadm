@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: smartdc
+  labels:
+    k8s-app: smartdc
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30001
+  selector:
+    k8s-app: smartdc
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smartdc
+  labels:
+    k8s-app: smartdc
+spec:
+  selector:
+    matchLabels:
+      k8s-app: smartdc
+  template:
+    metadata:
+      labels:
+        k8s-app: smartdc
+    spec:
+      containers:
+        - image: 10.7.19.252:5000/guojwe/huawei-k8s-dashboard:2019.11.20-11.04-91f81f5
+          name: smartdc
+          env: 
+            - name: TZ
+              value: Asia/Shanghai
+            - name: MYSQL_IP
+              value: ${mysql_ip}
+            - name: K8S_IP
+              value: 10.7.19.254
+            - name: K8S_PORT
+              value: "6443"
+            - name: registry
+              value: "http://10.7.19.252:5000/v2/"
+            - name: registryUrl
+              value: "10.7.19.252:5000"
+            - name: k8s_token
+              value: "eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJhZG1pbi10b2tlbi1ydG10NSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJhZG1pbiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjYwZWY0ZDhlLTBiNGEtMTFlYS04NDUzLWEwYTMzYjQyMWM0ZSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlLXN5c3RlbTphZG1pbiJ9.OeOSYgq73aOFPJuNjB22VXUW9iC0QA5KY23vyn-8nluVVoWe95xcn2W4EFvLmUBMQCRmHWkJlmVnyUD8kxShjDcJbf_VODaendsdsFSPUZxbjV9eSgHS22KclkheZzroHw3s0tIZ5SvUbF35SQlD-_Yf8x5w7PGJLjHwd7gR2WE2cPGlRWGZfjD0q4vuJ43yX_sutwL-mpLSqg5KM4K9_PaFst3AWWRUlNtFbHG4An0uzekGg1SpDTjtx2UlIOK17Adt7zdsfG4T4iIpqtFieXgDglyPWfRjz4MFXCONuGfqs8RU2IERYw2FcJZUDnUQw5yj1Ng7-GtOHa4ma8UXAQ"
+          ports:
+            - containerPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    ingress-host: smartdc.10.126.2.56.xip.io
+    k8s-app: smartdc
+  name: smartdc.10.126.2.56.xip.io
+  namespace: default
+spec:
+  rules:
+  - host: smartdc.10.126.2.56.xip.io
+    http:
+      paths:
+      - backend:
+          serviceName: smartdc
+          servicePort: 8080

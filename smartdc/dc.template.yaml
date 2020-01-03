@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: smartdc
+  labels:
+    k8s-app: smartdc
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: ${dc_nodePort}
+  selector:
+    k8s-app: smartdc
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smartdc
+  labels:
+    k8s-app: smartdc
+spec:
+  selector:
+    matchLabels:
+      k8s-app: smartdc
+  template:
+    metadata:
+      labels:
+        k8s-app: smartdc
+    spec:
+      containers:
+        - image: dc-registry:5000/guojwe/dc:${tag}
+          name: smartdc
+          env: 
+            - name: TZ
+              value: Asia/Shanghai
+            - name: MYSQL_IP
+              value: ${mysql_ip}
+            - name: K8S_IP
+              value: ${k8s_ip}
+            - name: K8S_PORT
+              value: "6443"
+            - name: registry
+              value: "http://dc-registry:5000/v2/"
+            - name: registryUrl
+              value: "dc-registry:5000"
+            - name: k8s_token
+              value: "${k8s_token}"
+          ports:
+            - containerPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    ingress-host: smartdc.${k8s_ip}.xip.io
+    k8s-app: smartdc
+  name: smartdc.${k8s_ip}.xip.io
+  namespace: default
+spec:
+  rules:
+  - host: smartdc.${k8s_ip}.xip.io
+    http:
+      paths:
+      - backend:
+          serviceName: smartdc
+          servicePort: 8080
