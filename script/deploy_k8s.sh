@@ -8,6 +8,7 @@ master_ip=$1
 
 sed -i "s/name: .*/name: $(hostname)/g" $dir/yaml/k8s.yaml
 sed -i "s/advertiseAddress: .*/advertiseAddress: $master_ip/g" $dir/yaml/k8s.yaml
+source $dir/script/unset_proxy.sh
 kubeadm init --config=$dir/yaml/k8s.yaml
 mkdir -p $HOME/.kube
 \cp /etc/kubernetes/admin.conf $HOME/.kube/config

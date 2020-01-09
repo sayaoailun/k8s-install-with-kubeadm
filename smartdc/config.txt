@@ -1,4 +1,5 @@
 tag=2019.12.30-13.43-400ef3b
 mysql_ip=10.126.2.103
 k8s_ip=10.126.2.103
+registry_ip=10.126.2.103
 dc_nodePort=30001

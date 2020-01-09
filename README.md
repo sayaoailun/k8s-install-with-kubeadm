@@ -12,7 +12,7 @@
 
 ### [hostips.txt](config/hostips.txt)
 - worker节点的IP列表
-- 每行一个IP，**以空行结束**
+- 每行一个IP，**文件以换行符结束**
 
 ## 部署说明
 ``` shell
@@ -24,7 +24,7 @@ bash script/install.sh
 
 **部署好k8s后方可部署Sm@rtDC**
 
-- [config.txt](smartdc/config.txt): 修改为实际环境的配置，每行一个配置，**以空行结束**
+- [config.txt](smartdc/config.txt): 修改为实际环境的配置，每行一个配置，**文件以换行符结束**
 - [deploy_dc.sh](smartdc/deploy_dc.sh): 部署Sm@rtDC的脚本
 
 ``` shell

@@ -22,9 +22,10 @@ done
 docker create --name dc-database $dc_image
 docker cp dc-database:/usr/local/tomcat/webapps/ROOT/WEB-INF/classes/db/mysql-init.sql $dir
 docker rm dc-database
-docker run -it --rm $mysql_image mysql -h$mysql_ip -uroot -pmysql < $dir/mysql-init.sql
+docker run -i --rm -e LC_ALL=C.UTF-8 $mysql_image mysql -h$mysql_ip -uroot -pmysql < $dir/mysql-init.sql
 # deploy dc
 \cp $dir/dc.template.yaml $dir/dc.yaml
+sed -i "s/\${k8s_token}/${token}/g" $dir/dc.yaml
 while read kv; do
     k=$(echo $kv|sed "s/=.*//g")
     v=$(echo $kv|sed "s/.*=//g")

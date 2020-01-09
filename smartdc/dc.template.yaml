@@ -42,9 +42,9 @@ spec:
             - name: K8S_PORT
               value: "6443"
             - name: registry
-              value: "http://dc-registry:5000/v2/"
+              value: "http://${registry_ip}:5000/v2/"
             - name: registryUrl
-              value: "dc-registry:5000"
+              value: "${registry_ip}:5000"
             - name: k8s_token
               value: "${k8s_token}"
           ports:
